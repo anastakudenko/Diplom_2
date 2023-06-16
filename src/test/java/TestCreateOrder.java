@@ -45,6 +45,7 @@ public class TestCreateOrder {
     @Test
     @DisplayName("Can create order Unauthorized User /api/orders")
     public void canCreateOrderUnauthorizedUser(){
+        //возвращает 200, но ожидаем 401 по документации
         ingredient1 = clientOrder.getListIngredients()
                 .statusCode(200)
                 .extract().path("data[0]._id");
@@ -53,10 +54,7 @@ public class TestCreateOrder {
                 .extract().path("data[1]._id");
         orderCreateRequest.setIngredients(Arrays.asList(ingredient1,ingredient2));
         clientOrder.createOrderUnauthorized(orderCreateRequest)
-                .statusCode(200)
-                .body("success", equalTo(true))
-                .body("$", hasKey("name"))
-                .body("$", hasKey("order"));
+                .statusCode(401);
     }
 
     @Test
