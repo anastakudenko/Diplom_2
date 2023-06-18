@@ -4,7 +4,7 @@ import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 public class BaseClient {
 
-    private String baseUrl = "https://stellarburgers.nomoreparties.site";
+    private final String baseUrl = "https://stellarburgers.nomoreparties.site";
     protected RequestSpecification getSpecAuthorized(String token) {
         return new RequestSpecBuilder()
                 .setContentType(ContentType.JSON)

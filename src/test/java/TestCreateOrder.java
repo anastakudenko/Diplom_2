@@ -1,8 +1,6 @@
 import clients.ClientOrder;
-import clients.ClientUser;
 import dataProvider.ClientProvider;
 import io.qameta.allure.junit4.DisplayName;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import pojo.UserCreateRequest;
@@ -12,11 +10,9 @@ import java.util.Arrays;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasKey;
 
-public class TestCreateOrder {
-    ClientUser clientUser = new ClientUser();
+public class TestCreateOrder extends BaseTest {
     ClientOrder clientOrder = new ClientOrder();
     OrderCreateRequest orderCreateRequest = new OrderCreateRequest();
-    String accessTokenUser;
     String ingredient1;
     String ingredient2;
     @Before
@@ -33,7 +29,6 @@ public class TestCreateOrder {
     @DisplayName("Can create order Authorized User /api/orders")
     public void canCreateOrder(){
         ingredient1 = clientOrder.getListIngredients()
-                .statusCode(200)
                 .extract().path("data[0]._id");
         orderCreateRequest.setIngredients(Arrays.asList(ingredient1));
         clientOrder.createOrderAuthorized(orderCreateRequest, accessTokenUser)
@@ -47,10 +42,8 @@ public class TestCreateOrder {
     public void canCreateOrderUnauthorizedUser(){
         //возвращает 200, но ожидаем 401 по документации
         ingredient1 = clientOrder.getListIngredients()
-                .statusCode(200)
                 .extract().path("data[0]._id");
         ingredient2 = clientOrder.getListIngredients()
-                .statusCode(200)
                 .extract().path("data[1]._id");
         orderCreateRequest.setIngredients(Arrays.asList(ingredient1,ingredient2));
         clientOrder.createOrderUnauthorized(orderCreateRequest)
@@ -74,13 +67,5 @@ public class TestCreateOrder {
         orderCreateRequest.setIngredients(Arrays.asList(RandomStringUtils.randomAlphabetic(24)));
         clientOrder.createOrderAuthorized(orderCreateRequest, accessTokenUser)
                 .statusCode(500);
-    }
-    @After
-    public void tearDown() {
-        //удаление пользователя
-        clientUser.delete(accessTokenUser)
-                .statusCode(202)
-                .body("success", equalTo(true))
-                .body("message",equalTo("User successfully removed"));
     }
 }

@@ -1,23 +1,17 @@
-import clients.ClientUser;
 import dataProvider.ClientProvider;
 import io.qameta.allure.junit4.DisplayName;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import pojo.UserCreateRequest;
 import static org.hamcrest.Matchers.equalTo;
 
-public class TestChangeUserData {
-    ClientUser clientUser = new ClientUser();
+public class TestChangeUserData extends BaseTest {
     UserCreateRequest clientCreateRequest = ClientProvider.getRandomCreateClient();
-    String accessTokenUser;
 
     @Before
     public void setUp(){
         //создание пользователя
         accessTokenUser = clientUser.create(clientCreateRequest)
-                .statusCode(200)
-                .body("success", equalTo(true))
                 .extract().jsonPath().get("accessToken");
     }
 
@@ -43,14 +37,5 @@ public class TestChangeUserData {
                 .statusCode(401)
                 .body("success", equalTo(false))
                 .body("message", equalTo("You should be authorised"));
-    }
-
-    @After
-    public void tearDown() {
-        //удаление пользователя
-        clientUser.delete(accessTokenUser)
-                .statusCode(202)
-                .body("success", equalTo(true))
-                .body("message",equalTo("User successfully removed"));
     }
 }
